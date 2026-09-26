@@ -1,0 +1,23 @@
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+
+@import "nativewind/theme";
+
+@theme {
+  --color-primary: #13a876;
+  --color-background: #0f1115;
+  --color-surface: #1a1d23;
+  --color-muted: #8e939c;
+
+  --color-brand-bg: #0b0e14;
+  --color-brand-body: #f5f4f0;
+  --color-brand-surface: #141822;
+  --color-brand-surface-border: #232838;
+  --color-brand-text-primary: #f2efe9;
+  --color-brand-text-secondary: #8a8d96;
+  --color-brand-text-muted: #5c5f68;
+  --color-brand-blue: #13a876;
+  --color-brand-coral: #ff6b4a;
+  --color-brand-success: #3ddc84;
+}
