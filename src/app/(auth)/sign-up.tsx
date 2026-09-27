@@ -87,7 +87,7 @@ export default function SignupScreen() {
             return;
           }
 
-          const url = decorateUrl("/");
+          const url = decorateUrl("/onboarding");
           router.replace(url as any);
         },
       });
