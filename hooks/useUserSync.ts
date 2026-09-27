@@ -18,7 +18,7 @@ export const useUserSync = () => {
       try {
         const { data: existingUser, error: fetchError } = await authSupabase
           .from("users")
-          .select("clerk_id, currency")
+          .select("clerk_id, currency, onboarding_complete")
           .eq("clerk_id", user.id)
           .single();
 
@@ -30,26 +30,28 @@ export const useUserSync = () => {
 
         if (existingUser) {
           setCurrency(existingUser.currency ?? "INR");
-          setNeedsOnboarding(false);
+          setNeedsOnboarding(!existingUser.onboarding_complete);
           return;
         }
 
-        const email = user.emailAddresses?.[0]?.emailAddress;
+        const email = user.emailAddresses[0].emailAddress;
 
-        if (!email) {
-          console.error("User does not have an email address");
-          setNeedsOnboarding(true);
-          return;
-        }
+        // if (!email) {
+        //   console.error("User does not have an email address");
+        //   setNeedsOnboarding(true);
+        //   return;
+        // }
 
-        const { data: newUser, error: insertError } = await authSupabase.from("users").upsert({
-          clerk_id: user.id,
-          email,
-          name: `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim(),
-          image_url: user.imageUrl
-        }, {
-          onConflict: "clerk_id", ignoreDuplicates: false
-        }).select("currency").single()
+        const { data: newUser, error: insertError } = await authSupabase
+          .from("users")
+          .upsert({
+            clerk_id: user.id,
+            email,
+            name: `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim(),
+            image_url: user.imageUrl,
+          }, { onConflict: "clerk_id", ignoreDuplicates: false })
+          .select("currency, onboarding_complete")
+          .single();
 
         if (insertError) {
           console.error("Error inserting new user:", insertError);
@@ -58,7 +60,7 @@ export const useUserSync = () => {
         }
 
         setCurrency(newUser?.currency ?? "INR");
-        setNeedsOnboarding(!newUser?.currency);
+        setNeedsOnboarding(!newUser?.onboarding_complete);
 
         const { error: accountError } = await authSupabase
           .from("accounts").insert({
@@ -79,7 +81,5 @@ export const useUserSync = () => {
     };
 
     syncUser();
-  }, [user?.id, authSupabase,
-    setCurrency,
-    setNeedsOnboarding]);
+  }, [user?.id]);
 };

@@ -35,7 +35,7 @@ export default function RootLayout() {
   }
 
   if (needsOnboarding && pathname !== "/onboarding") {
-    return <Redirect href={"/(root)/onboarding"} />;
+    return <Redirect href={"/onboarding"} />;
   }
 
   return <Slot />;
